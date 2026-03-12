@@ -1,0 +1,310 @@
+//INVENTORY MANAGEMENT SYSTEM
+
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+struct inventory
+{
+    char ID[20];
+    char name[50];
+    int quantity;
+    double price;
+};
+int ni=0;
+struct inventory inv[1000];
+//DISPLAYING MENU & CALLING THEM
+void menu(void) //displaying the menu
+{
+    int n;
+    printf("-----------Inventory Management System------------\n\n");
+    printf("Action menu\n\n");
+    printf("1. Add Item\n");
+    printf("2. Display All Items\n");
+    printf("3. Search Items\n");
+    printf("4. Update Item\n");
+    printf("5. Delete Item\n");
+    printf("6. Save and Exit\n\n");
+    printf("Enter index of action you want to perform: ");
+    // Read a character for menu choice
+    scanf("%d", &n);
+
+    // Loop until valid input (1-6)
+    while(n!=1 && n!=2 && n!=3 && n!=4 && n!=5 && n!=6)
+    {
+        printf("Invalid choice. Please select a valid option: ");
+        while(getchar() != '\n');  // Discard any extra characters
+        scanf("%d", &n);  // Read the input again
+    }
+    switch(n)
+    {
+        case 1: add(); break;
+        case 2: display(); break;
+        case 3: search(); break;
+        case 4: update(); break;
+        case 5: delete_item(); break;
+        case 6: save_exit(); break;
+    }
+}
+//ADDING ITEMS
+void add()
+{
+    if(ni>=1000)
+    {
+        printf("Inventory full\n");
+        return;
+    }
+    printf("\n\nAdding items:\n\n");
+    //inputting values to structure
+    printf("Enter item id= ");
+    scanf("%s",inv[ni].ID);
+
+    printf("Enter item name= ");
+    scanf(" %[^\n]%*c", inv[ni].name);
+ //checking to ensure only numeric data is entered
+    while (1) //infinite loop that runs till user gives correct input
+    {
+        printf("Enter item quantity= ");
+        if (scanf("%d", &inv[ni].quantity) != 1 || inv[ni].quantity < 0) //checking if scanf scanned the correct input or not
+        {
+            printf("Invalid input! Please enter a valid quantity (non-negative integer).\n");
+            while (getchar() != '\n');//removing any extra characters
+        }
+        else
+        {
+            break;
+        }
+    }
+    while(1)
+
+    {
+        printf("Enter price per unit of item= ");
+        if((scanf("%lf",&inv[ni].price))!=1 || inv[ni].price<0)
+        {
+            printf("Invalid input !! Please enter valid input(positive numerical value)\n");
+            while(getchar()!='\n');//to remove any leftover characters
+        }
+        else
+            break;
+    }
+
+    printf("\nItem added successfully!\n\n");
+    ni++;
+
+    char ch[5];
+    printf("To enter next item , please enter 'next' or 'menu' to see the menu: ");
+    scanf("%s",ch);
+    printf("\n");
+
+    if(strcmp(ch,"next")==0)
+    {
+         add();
+    }
+    else
+    {   //displaying menu and asking for users choice
+        menu();
+        //calling(a);
+    }
+}
+//DISPLAYING ALL ITEMS
+void display()
+{
+    printf("\n\nDisplaying inventory items: \n\n");
+    for(int i=0;i<ni;i++)
+    {
+        printf("%d.\t ID= %5s\t Item name= %15s\t Quantity= %10d\t Price per item= %.2lf\n",i+1,inv[i].ID,inv[i].name,inv[i].quantity,inv[i].price);
+    }
+    printf("\n");
+    //displaying the menu again
+    menu();
+
+}
+// SEARCHING FOR AN ITEM AND DISPLAYING ITS DETAILS
+void search()
+{
+    printf("\n\nSearching for item in inventory: \n\n");
+    char search_id[20];
+    printf("Enter ID of the item to search: ");
+    scanf("%s",search_id);
+    printf("\n");
+
+    int found=0;
+    for(int j=0;j<ni;j++)
+    {
+        if(strcmp(search_id,inv[j].ID)==0)//comparing ids
+        {
+            printf("Item found!\n\nDetails:\n");
+            printf("ID= %s\n",inv[j].ID);
+            printf("Item name= ");
+            puts(inv[j].name);
+            printf("Quantity= %d\n",inv[j].quantity);
+            printf("Price per item= %.2lf\n\n",inv[j].price);
+            found++;
+            break;
+        }
+
+    }
+    if(found==0)
+        printf("Item not found!\n\n");
+
+    //displaying the menu again
+    menu();
+
+}
+// UPDATING ITEMS
+void update()
+{
+    printf("\n\nUPDATING ITEM\n");
+    char search_item[20];
+    int choice,j;
+    printf("\nEnter ID of item you want to update: ");
+    scanf("%s",search_item);
+    int found=0;
+
+    //searching for item
+    for(j=0;j<ni;j++)
+    {
+        if(strcmp(search_item,inv[j].ID)==0)
+        {
+            printf("\nItem found!\n\nDetails:\n");
+            printf("ID= %s\n",inv[j].ID);
+            printf("1. Item name= ");
+            puts(inv[j].name);
+            printf("2. Quantity= %d\n",inv[j].quantity);
+            printf("3. Price per item= %.2lf\n\n",inv[j].price);
+            found++;
+            break;
+        }
+    }
+    if(found==0)
+    {
+        printf("Item not found!\n");
+        menu();
+        return;
+    }
+    printf("Updating item: \n\n");
+    printf("Enter index of detail you want to update: ");
+    scanf("%d",&choice);
+    switch(choice)
+    {
+
+    case 1:
+        {
+            printf("Enter new name of the item= ");
+            scanf(" %[^\n]%*c",inv[j].name);
+            break;
+        }
+    case 2:
+        {
+            printf("Enter new quantity of item= ");
+            scanf("%d",&inv[j].quantity);
+            break;
+        }
+    case 3:
+        {
+            printf("Enter new price per unit for the item: ");
+            scanf("%lf",&inv[j].price);
+            break;
+        }
+        default:printf("invalid choice of index!!\n");
+    }
+    printf("Item details updated successfully!\n\n");
+    printf("Updated details of item: \n");
+    printf("ID= %s\n",inv[j].ID);
+    printf("Item name= ");
+    puts(inv[j].name);
+    printf("Item quantity= %d\n",inv[j].quantity);
+    printf("Price per unit= %.2lf\n\n",inv[j].price);
+
+    //displaying the menu
+    menu();
+
+    return;
+
+}
+//DELETING ITEMS
+void delete_item()
+{
+    printf("\n\nDeleting Item\n\n");
+    char search_item[20];
+    int j;
+    printf("Enter ID of item you want to delete: ");
+    scanf("%s",search_item);
+
+    int found=0;
+    for(j=0;j<ni;j++)
+    {
+        if(strcmp(search_item,inv[j].ID)==0)
+        {
+            printf("Item found!\n\nDetails:\n");
+            printf("1. ID= %s\n",inv[j].ID);
+            printf("2. Item name= ");
+            puts(inv[j].name);
+            printf("3. Quantity= %d\n",inv[j].quantity);
+            printf("4. Price per item= %lf\n",inv[j].price);
+            found++;
+            break;
+        }
+    }
+    if(found==0)
+    {
+        printf("Item to be deleted not found!\n");
+
+    }
+    else
+    {
+        for(int k=j;k<ni-1;k++)//loop to delete the required index item and shift all the items one index backward
+        {
+            strcpy(inv[k].ID,inv[k+1].ID);
+            strcpy(inv[k].name,inv[k+1].name);
+            inv[k].quantity=inv[k+1].quantity;
+            inv[k].price=inv[k+1].price;
+        }
+        ni--;
+        printf("Item deleted successfully!\n\n");
+    }
+
+//displaying menu
+    menu();
+
+}
+//LOADING DATA FROM FILE
+void load_data()
+{
+    FILE* ptr2;
+    ptr2=fopen("Text.txt","rb");//opening the file in binary mode because it is more suitable for storing/reading structure data types
+    if(ptr2==NULL)
+    {
+        printf("Error opening the file!\n");
+        return;
+    }
+    fread(&ni,sizeof(int),1,ptr2);//reading the first line of file to get the number of items in the inventory
+    fread(inv,sizeof(struct inventory),ni,ptr2);//reading the data from the file into the structure
+    printf("data loaded successfully!\n\n");
+    fclose(ptr2);
+}
+//SAVING THE FILE AND EXITING THE PROGRAM
+void save_exit()
+{
+    printf("\n\nSaving the data...\n");
+    FILE* fptr;
+    fptr=fopen("Text.txt","wb");
+    if(fptr==NULL)
+    {
+        printf("Error saving the file!\n");
+        return;
+    }
+
+    fwrite(&ni,sizeof(int),1,fptr);//writing the number of items in inventory to the file
+    fwrite(inv,sizeof(struct inventory),ni,fptr);//writing the array of structures to the file
+    fclose(fptr);
+    printf("Data saved successfully! Exiting the program...\n");
+    exit(0);
+}
+
+int main()
+{
+    load_data();
+    menu();
+}
+
